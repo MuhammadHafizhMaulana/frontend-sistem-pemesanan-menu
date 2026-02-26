@@ -9,4 +9,15 @@ const api = axios.create({
   },
 });
 
+// inject X-Guest-ID otomatis
+api.interceptors.request.use((config) => {
+  const guestId = localStorage.getItem("guest_id");
+
+  if (guestId) {
+    config.headers["X-Guest-ID"] = guestId;
+  }
+
+  return config;
+});
+
 export default api;

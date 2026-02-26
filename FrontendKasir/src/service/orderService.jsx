@@ -15,36 +15,24 @@ function hanldeError(error) {
   throw new Error("Terjadi kesalahan tidak diketahui");
 }
 
-const menuService = {
-  async getMenusBasedOnCategory() {
+const orderService = {
+  async  getDetailOrder(orderCode){
     try {
-      const res = await api.get("/customer/menu");
+      const res = await api.get(`customer/order-history/${orderCode}`);
       return res.data;
     } catch (error) {
       hanldeError(error);
     }
   },
 
-  async getMenuBySlug(slug) {
+  async getOrderList(){
     try {
-      const res = await api.get(`/customer/menu/${slug}`);
-      console.log("detail menu", res.data);
+      const res = await api.get("customer/order-history");
       return res.data;
     } catch (error) {
       hanldeError(error);
     }
-  },
-
-  async searchMenus(search) {
-    try {
-      const res = await api.get(`/customer/menu/search`, {
-        params: { search },
-      });
-      return res.data;
-    } catch (error) {
-      hanldeError(error);
-    }
-  },
+  }
 };
 
-export default menuService;
+export default orderService;

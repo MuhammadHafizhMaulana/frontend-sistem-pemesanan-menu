@@ -1,12 +1,19 @@
+import { useNavigate } from "react-router-dom";
+
 export default function CartBar({ cart }) {
+  const navigate = useNavigate();
+  const goToCart = () => {
+    navigate("/cart");
+  };
+
   if (!cart || cart.length === 0) return null;
 
   const totalQty = cart.reduce((total, item) => {
-    return total + item.qty;
+    return total + item.quantity;
   }, 0);
 
   const totalPrice = cart.reduce((total, item) => {
-    return total + item.qty * item.price;
+    return total + item.quantity * item.menu?.price;
   }, 0);
 
   return (
@@ -17,7 +24,10 @@ export default function CartBar({ cart }) {
           <p className="font-bold">Rp {totalPrice.toLocaleString("id-ID")}</p>
         </div>
 
-        <button className="bg-white text-green-600 px-4 py-2 rounded-lg font-semibold">
+        <button
+          onClick={goToCart}
+          className="bg-white text-green-600 px-4 py-2 rounded-lg font-semibold"
+        >
           Lihat Keranjang
         </button>
       </div>

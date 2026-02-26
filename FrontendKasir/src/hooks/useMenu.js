@@ -44,7 +44,8 @@ export function useMenus({ search = "" } = {}) {
     try {
       const res = await menuService.getMenuBySlug(slug);
       setSelectedMenu(res.data);
-      return res;
+      console.log("Menu di  hook", res.data);
+      return res.data;
     } catch (error) {
       setError(error.message);
       throw error;

@@ -1,30 +1,34 @@
-import {
-  Bars3Icon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
-import Header from "../../components/customer/Header";
-import MenuCard from "../../components/customer/menuCard";
+import Banner from "../../components/customer/Banner";
+import MenuCard from "../../components/customer/MenuCard";
 import KategoriBar from "../../components/customer/KategoriBar";
 import MenuByKategori from "../../components/customer/MenuByKategori";
 import CartBar from "../../components/customer/KeranjangBar";
 import { useRef } from "react";
 import { useMenus } from "../../hooks/useMenu";
 import { useCart } from "../../hooks/useCart";
+import useStore from "../../hooks/useStore";
 import LoadingCustomerHome from "../../components/loading/LoadingCustomerHome";
 
 export default function Home() {
   const sectionRefs = useRef({});
 
   const { categories, menus, isLoadingList } = useMenus();
-  const { cartMap, addItem, cart } = useCart();
+  const { addItem, cart, reduceItem } = useCart();
+
+  const { store } = useStore();
 
   const getMenuQty = (menuId) => {
-    return cartMap[`${menuId}-default`]?.qty || 0;
+    return cart
+      .filter((item) => item.menu_id === menuId)
+      .reduce((total, item) => total + item.quantity, 0);
   };
 
   const handleAddMenu = (menu) => {
     addItem(menu.id, null, 1);
+  };
+
+  const handleRemoveMenu = (cartItemId) => {
+    reduceItem(cartItemId);
   };
 
   const handleSelectKategori = (category) => {
@@ -39,14 +43,14 @@ export default function Home() {
   return (
     <div className="min-h-screen flex justify-center bg-gray-200">
       <div className="w-full max-w-md bg-[#f4f0e4]">
-        {/* HEADER / BANNER */}
-        <Header />
+        {/* BANNER */}
+        <Banner />
 
         {/* MAIN */}
         <main className="px-4 pb-6">
           {/* INFO */}
           <section className="bg-white rounded-2xl p-4 mt-4 border">
-            <h3 className="font-semibold">Mie Gacoan</h3>
+            <h3 className="font-semibold">{store?.store_name}</h3>
             <p className="text-sm text-gray-600">
               Buka hari ini jam 09.00 - 23.00
             </p>
@@ -73,6 +77,12 @@ export default function Home() {
                   menus={menu}
                   qty={getMenuQty(menu.id)}
                   onAdd={() => handleAddMenu(menu)}
+                  onRemove={() => {
+                    const cartItem = cart.find(
+                      (c) => c.menu_id === menu.id && c.variant_id === null,
+                    );
+                    if (cartItem) reduceItem(cartItem.id);
+                  }}
                 />
               ))}
             </div>
@@ -83,7 +93,8 @@ export default function Home() {
             categories={categories}
             sectionRefs={sectionRefs}
             cart={cart}
-            addMenuToCart={handleAddMenu}
+            onAdd={handleAddMenu}
+            onReduce={handleRemoveMenu}
           />
 
           {/* CART */}

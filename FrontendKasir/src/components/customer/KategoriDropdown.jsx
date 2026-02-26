@@ -21,7 +21,7 @@ export default function KategoriDropdown({ kategori, onSelect }) {
                   active ? "bg-gray-100" : ""
                 } w-full text-left px-4 py-2 text-sm`}
               >
-                {k.name}
+                {k.category_name}
               </button>
             )}
           </Menu.Item>
